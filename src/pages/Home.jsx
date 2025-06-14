@@ -66,7 +66,7 @@ export default function Home() {
       >
         <div className="bg-black bg-opacity-50 p-10 rounded text-center max-w-2xl">
           <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
-            Salle de Bain de Luxe à Cannes
+            EADPC Expert en installations 
           </h1>
           <p className="text-white text-lg mb-6">
             Design. Confort. Excellence artisanale.
