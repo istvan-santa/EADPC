@@ -43,9 +43,10 @@ export default function Realisations() {
   return (
     <section className="bg-white pt-24 pb-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-center mb-12">
-          Nos Réalisations
-        </h2>
+<section className="mt-[120px] px-4 md:px-12 lg:px-24">
+  <h2 className="text-3xl font-bold text-center mb-8">Nos Réalisations</h2>
+</section>
+
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project, index) => (
             <div

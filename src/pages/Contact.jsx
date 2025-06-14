@@ -5,7 +5,10 @@ export default function Contact() {
   return (
     <section className="min-h-screen bg-white pt-24 pb-16 px-4 md:px-8">
       <div className="max-w-3xl mx-auto text-center mb-12">
-        <h2 className="text-3xl font-semibold mb-4">Contactez-nous</h2>
+        <section className="mt-[120px] px-4 md:px-12 lg:px-24">
+  <h2 className="text-3xl font-bold text-center mb-8">Contactez-nous</h2>
+</section>
+
         <p className="text-gray-600">
           Une question ? Un projet en tête ? Remplissez le formulaire ci-dessous
           et nous reviendrons vers vous rapidement.
