@@ -1,113 +1,102 @@
 // src/pages/Admin.jsx
 import React, { useState, useEffect } from "react";
 import { uploadToCloudinary } from "../utils/cloudinaryService";
+import { getRealisations, deleteRealisation } from "../utils/localStorageService";
+import { useAuth } from "../context/AuthContext";
 
 export default function Admin() {
-  const [image, setImage] = useState(null);
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
+  const { logout } = useAuth();
   const [realisations, setRealisations] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
-  // Charger les données au démarrage
   useEffect(() => {
-    const stored = localStorage.getItem("realisations");
-    if (stored) {
-      setRealisations(JSON.parse(stored));
-    }
+    const stored = getRealisations();
+    setRealisations(stored);
   }, []);
 
-  // Sauvegarde automatique dans le localStorage
-  useEffect(() => {
-    localStorage.setItem("realisations", JSON.stringify(realisations));
-  }, [realisations]);
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
 
   const handleUpload = async () => {
-    if (!image) return alert("Choisis une image");
+    if (!selectedFile) return;
+    setUploading(true);
+    const imageUrl = await uploadToCloudinary(selectedFile);
 
-    const url = await uploadToCloudinary(image);
-
-    const newItem = { image: url, title, location };
-    const updated = [newItem, ...realisations];
-    setRealisations(updated);
-    setImage(null);
-    setTitle("");
-    setLocation("");
+    if (imageUrl) {
+      const updated = [...realisations, { image: imageUrl }];
+      localStorage.setItem("realisations", JSON.stringify(updated));
+      setRealisations(updated);
+      setSelectedFile(null);
+      setShowForm(false);
+    }
+    setUploading(false);
   };
 
   const handleDelete = (index) => {
     const updated = realisations.filter((_, i) => i !== index);
-    setRealisations(updated);
-  };
-
-  const handleEdit = (index, field, value) => {
-    const updated = [...realisations];
-    updated[index][field] = value;
+    localStorage.setItem("realisations", JSON.stringify(updated));
     setRealisations(updated);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-32 pb-20 px-4 md:px-12 lg:px-24">
-      <h1 className="text-3xl font-bold mb-8 text-center">Gestion des Réalisations</h1>
+    <section className="pt-24 pb-16 px-4 md:px-8">
+      <div className="max-w-4xl mx-auto mt-32 relative">
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Espace d'administration
+        </h2>
 
-      <div className="bg-white p-6 rounded shadow mb-12">
-        <h2 className="text-xl font-semibold mb-4">Ajouter une réalisation</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <input
-            type="text"
-            placeholder="Titre"
-            className="border p-2 rounded"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Ville"
-            className="border p-2 rounded"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-          <input
-            type="file"
-            accept="image/*"
-            className="border p-2 rounded"
-            onChange={(e) => setImage(e.target.files[0])}
-          />
-        </div>
+        {/* Déconnexion */}
         <button
-          onClick={handleUpload}
-          className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          onClick={logout}
+          className="absolute top-0 right-0 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
         >
-          Publier
+          Déconnexion
         </button>
-      </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {realisations.map((item, index) => (
-          <div key={index} className="bg-white shadow rounded overflow-hidden">
-            <img src={item.image} alt={item.title} className="w-full h-56 object-cover" />
-            <div className="p-4">
-              <input
-                type="text"
-                value={item.title}
-                onChange={(e) => handleEdit(index, "title", e.target.value)}
-                className="w-full border p-2 rounded mb-2"
-              />
-              <input
-                type="text"
-                value={item.location}
-                onChange={(e) => handleEdit(index, "location", e.target.value)}
-                className="w-full border p-2 rounded mb-2"
+        {/* Affichage des réalisations */}
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 mb-6">
+          {realisations.map((realisation, index) => (
+            <div key={index} className="relative">
+              <img
+                src={realisation.image}
+                alt="Réalisation"
+                className="w-full h-48 object-cover rounded"
               />
               <button
                 onClick={() => handleDelete(index)}
-                className="mt-2 w-full py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
               >
-                Supprimer
+                ✕
               </button>
             </div>
+          ))}
+
+          {/* Bouton Ajouter */}
+          <div
+            className="flex items-center justify-center h-48 bg-gray-200 rounded cursor-pointer hover:bg-gray-300"
+            onClick={() => setShowForm(true)}
+          >
+            <span className="text-3xl">+</span>
           </div>
-        ))}
+        </div>
+
+        {/* Formulaire Upload */}
+        {showForm && (
+          <div className="bg-gray-100 p-4 rounded shadow mb-4">
+            <input type="file" onChange={handleFileChange} />
+            <button
+              onClick={handleUpload}
+              disabled={uploading}
+              className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              {uploading ? "Chargement..." : "Publier"}
+            </button>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 }

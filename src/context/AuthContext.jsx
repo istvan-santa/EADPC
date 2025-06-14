@@ -1,15 +1,19 @@
-// src/context/AuthContext.jsx
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("isAuthenticated") === "true"
+  );
 
   const login = (email, password) => {
-    // Simple exemple : à remplacer par une vraie vérification + token + API plus tard
-    if (email === import.meta.env.VITE_ADMIN_EMAIL && password === import.meta.env.VITE_ADMIN_PASSWORD) {
+    const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
+    const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+
+    if (email === adminEmail && password === adminPassword) {
       setIsAuthenticated(true);
+      localStorage.setItem("isAuthenticated", "true");
       return true;
     }
     return false;
@@ -17,6 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setIsAuthenticated(false);
+    localStorage.removeItem("isAuthenticated");
   };
 
   return (
@@ -25,3 +30,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+// 👉 C'est CETTE ligne qui manquait sûrement :
+export const useAuth = () => useContext(AuthContext);
