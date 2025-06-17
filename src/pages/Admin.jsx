@@ -50,7 +50,7 @@ export default function Admin() {
   };
 
   return (
-    <section className="pt-24 pb-12 px-4 md:px-8 bg-gray-50 min-h-screen">
+    <section className="pt-36 pb-12 px-4 md:px-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-center">Espace Administration</h1>
 

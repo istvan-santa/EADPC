@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Ne pas indexer les pages d’administration ou de connexion
+Disallow: /admin
+Disallow: /login
+
+# Indique où est le sitemap
+Sitemap: https://www.tonsite.com/sitemap.xml
