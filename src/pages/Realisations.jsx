@@ -1,64 +1,44 @@
 // src/pages/Realisations.jsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase/firebaseConfig";
 
 export default function Realisations() {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [cloudinaryImages, setCloudinaryImages] = useState([]);
+  const [realisations, setRealisations] = useState([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("realisations");
-    if (stored) {
+    const fetchRealisations = async () => {
       try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setCloudinaryImages(parsed);
-        }
+        const querySnapshot = await getDocs(collection(db, "realisations"));
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setRealisations(data);
       } catch (error) {
-        console.error("Erreur parsing localStorage:", error);
+        console.error("Erreur lors de la récupération des réalisations :", error);
       }
-    }
+    };
+
+    fetchRealisations();
   }, []);
 
   return (
-    <>
-      <section className="bg-white pt-24 pb-16 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto">
-          <section className="mt-[120px] px-4 md:px-12 lg:px-24">
-            <h2 className="text-3xl font-bold text-center mb-8">
-              Nos Réalisations
-            </h2>
-          </section>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {cloudinaryImages.map((item, index) => (
-              <div
-                key={index}
-                className="rounded-lg overflow-hidden shadow hover:shadow-xl transition duration-300 cursor-pointer"
-                onClick={() => setSelectedImage(item.imageUrl)}
-              >
-                <img
-                  src={item.imageUrl}
-                  alt="Réalisation"
-                  className="w-full h-64 object-cover transition-transform duration-300 hover:scale-105"
-                />
-              </div>
-            ))}
-          </div>
+    <section className="pt-24 pb-12 px-4 md:px-8 bg-white min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-center">Nos Réalisations</h1>
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {realisations.map((realisation) => (
+            <div key={realisation.id} className="rounded shadow">
+              <img
+                src={realisation.imageUrl}
+                alt="Réalisation"
+                className="w-full h-48 object-cover rounded"
+              />
+            </div>
+          ))}
         </div>
-      </section>
-
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
-          onClick={() => setSelectedImage(null)}
-        >
-          <img
-            src={selectedImage}
-            alt="Zoom"
-            className="max-w-full max-h-full object-contain rounded-xl"
-          />
-        </div>
-      )}
-    </>
+      </div>
+    </section>
   );
 }

@@ -1,99 +1,107 @@
 // src/pages/Admin.jsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { uploadToCloudinary } from "../utils/cloudinaryService";
-import { getRealisations, deleteRealisation } from "../utils/localStorageService";
-import { useAuth } from "../context/AuthContext";
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebase/firebaseConfig";
 
 export default function Admin() {
-  const { logout } = useAuth();
+  const [file, setFile] = useState(null);
   const [realisations, setRealisations] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [showUploader, setShowUploader] = useState(false);
 
   useEffect(() => {
-    const stored = getRealisations();
-    setRealisations(stored);
+    const unsub = onSnapshot(collection(db, "realisations"), (snapshot) => {
+      const docs = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setRealisations(docs);
+    });
+    return () => unsub();
   }, []);
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
-
   const handleUpload = async () => {
-    if (!selectedFile) return;
-    setUploading(true);
-    const imageUrl = await uploadToCloudinary(selectedFile);
+    if (!file) return;
 
-    if (imageUrl) {
-      const updated = [...realisations, { image: imageUrl }];
-      localStorage.setItem("realisations", JSON.stringify(updated));
-      setRealisations(updated);
-      setSelectedFile(null);
-      setShowForm(false);
+    try {
+      const imageUrl = await uploadToCloudinary(file);
+      await addDoc(collection(db, "realisations"), {
+        imageUrl,
+        createdAt: serverTimestamp(),
+      });
+
+      setFile(null);
+      setShowUploader(false);
+    } catch (error) {
+      console.error("Erreur lors de l'upload :", error);
     }
-    setUploading(false);
   };
 
-  const handleDelete = (index) => {
-    const updated = realisations.filter((_, i) => i !== index);
-    localStorage.setItem("realisations", JSON.stringify(updated));
-    setRealisations(updated);
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "realisations", id));
+    } catch (error) {
+      console.error("Erreur lors de la suppression :", error);
+    }
   };
 
   return (
-    <section className="pt-24 pb-16 px-4 md:px-8">
-      <div className="max-w-4xl mx-auto mt-32 relative">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Espace d'administration
-        </h2>
+    <section className="pt-24 pb-12 px-4 md:px-8 bg-gray-50 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center">Espace Administration</h1>
 
-        {/* Déconnexion */}
-        <button
-          onClick={logout}
-          className="absolute top-0 right-0 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-        >
-          Déconnexion
-        </button>
-
-        {/* Affichage des réalisations */}
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 mb-6">
-          {realisations.map((realisation, index) => (
-            <div key={index} className="relative">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 mb-8">
+          {realisations.map((realisation) => (
+            <div key={realisation.id} className="relative group">
               <img
-                src={realisation.image}
+                src={realisation.imageUrl}
                 alt="Réalisation"
-                className="w-full h-48 object-cover rounded"
+                className="w-full h-48 object-cover rounded shadow"
               />
               <button
-                onClick={() => handleDelete(index)}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                onClick={() => handleDelete(realisation.id)}
+                className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
               >
-                ✕
+                ×
               </button>
             </div>
           ))}
 
-          {/* Bouton Ajouter */}
           <div
-            className="flex items-center justify-center h-48 bg-gray-200 rounded cursor-pointer hover:bg-gray-300"
-            onClick={() => setShowForm(true)}
+            onClick={() => setShowUploader(true)}
+            className="cursor-pointer flex items-center justify-center bg-gray-200 rounded shadow h-48 hover:bg-gray-300 transition"
           >
-            <span className="text-3xl">+</span>
+            <span className="text-4xl text-gray-500">+</span>
           </div>
         </div>
 
-        {/* Formulaire Upload */}
-        {showForm && (
-          <div className="bg-gray-100 p-4 rounded shadow mb-4">
-            <input type="file" onChange={handleFileChange} />
-            <button
-              onClick={handleUpload}
-              disabled={uploading}
-              className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              {uploading ? "Chargement..." : "Publier"}
-            </button>
+        {showUploader && (
+          <div className="bg-white p-6 rounded shadow max-w-md mx-auto">
+            <h2 className="text-xl font-semibold mb-4">Ajouter une nouvelle image</h2>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="mb-4 w-full"
+            />
+            <div className="flex justify-between">
+              <button
+                onClick={handleUpload}
+                className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+              >
+                Publier
+              </button>
+              <button
+                onClick={() => setShowUploader(false)}
+                className="text-gray-500 hover:underline"
+              >
+                Annuler
+              </button>
+            </div>
           </div>
         )}
       </div>
