@@ -12,6 +12,7 @@
     "@cloudinary/url-gen": "^1.21.0",
     "axios": "^1.10.0",
     "firebase": "^11.9.1",
+    "lucide-react": "^0.518.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet-async": "^2.0.5",

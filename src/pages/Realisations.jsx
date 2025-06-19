@@ -33,7 +33,7 @@ export default function Realisations() {
               <img
                 src={realisation.imageUrl}
                 alt="Réalisation"
-                className="w-full h-48 object-cover rounded"
+                className="w-full h-48 object-cover rounded shadow-lg transition duration-300 ease-in-out transform hover:scale-105 hover:opacity-90"
               />
             </div>
           ))}
