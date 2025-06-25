@@ -38,19 +38,19 @@ const services = [
 
 const previewProjects = [
   {
-    image: "/src/images/IMG-20250612-WA0008.jpg",
-    title: "Salle de Bain en Marbre",
-    location: "Nice",
+    image: "/assets/images/Image-1.jpg",
+    title: "Installation sanitaire",
+    location: "Mougins",
   },
   {
-    image: "/src/images/IMG-20250612-WA0011.jpg",
-    title: "Douche à l'italienne",
+    image: "/assets/images/Image-2.jpg",
+    title: "Installation sanitaire",
+    location: "Antibes",
+  },
+  {
+    image: "/assets/images/Image-3.jpg",
+    title: "Installation sanitaire",
     location: "Cannes",
-  },
-  {
-    image: "/src/images/IMG-20250612-WA0012.jpg",
-    title: "Baignoire Îlot Moderne",
-    location: "Monaco",
   },
 ];
 
