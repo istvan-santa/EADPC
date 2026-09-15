@@ -1,6 +1,6 @@
 // src/pages/Realisations.jsx
 import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
 export default function Realisations() {
@@ -9,7 +9,9 @@ export default function Realisations() {
   useEffect(() => {
     const fetchRealisations = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "realisations"));
+        // Même tri que l'espace admin : les plus récentes en premier
+        const q = query(collection(db, "realisations"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
         const data = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),

@@ -1,0 +1,21 @@
+rules_version = '2';
+
+// À copier dans la console Firebase > Firestore Database > Règles.
+// Sans ces règles, la base reste ouverte en écriture et n'importe qui
+// peut ajouter ou supprimer des réalisations, quelle que soit la
+// protection côté interface.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /realisations/{document} {
+      // Galerie publique : lecture ouverte à tous
+      allow read: if true;
+      // Écriture réservée à un compte authentifié (espace admin)
+      allow create, update, delete: if request.auth != null;
+    }
+
+    // Tout le reste est fermé par défaut
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

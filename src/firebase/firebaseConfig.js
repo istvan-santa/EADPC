@@ -1,6 +1,7 @@
 // src/firebase/firebaseConfig.js
 import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 // Configuration Firebase depuis les variables d'environnement
 const firebaseConfig = {
@@ -15,8 +16,5 @@ const firebaseConfig = {
 // On initialise Firebase une seule fois
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// On initialise Firestore à partir de l'app
-const db = getFirestore(app);
-
-// ✅ On exporte `db` pour tous les composants (Admin, Réalisations, etc.)
-export { db };
+export const db = getFirestore(app);
+export const auth = getAuth(app);
