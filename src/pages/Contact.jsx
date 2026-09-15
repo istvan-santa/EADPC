@@ -1,5 +1,6 @@
 // src/pages/Contact.jsx
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 
 // Web3Forms : envoi direct vers la boîte mail, sans serveur à maintenir.
 // La clé est publique par conception (elle ne sert qu'à router vers l'adresse
@@ -44,6 +45,15 @@ export default function Contact() {
 
   return (
     <section className="min-h-screen bg-white pt-36 pb-16 px-4 md:px-8">
+      <Helmet>
+        <title>Contact et devis gratuit | EADPC plombier à Grasse</title>
+        <meta
+          name="description"
+          content="Contactez EADPC pour un devis gratuit : plomberie, chauffage et climatisation à Grasse, Cannes, Antibes et Nice. Réponse rapide, urgences 24h/7j."
+        />
+        <link rel="canonical" href="https://www.eadpc.fr/contact" />
+      </Helmet>
+
       <div className="max-w-3xl mx-auto text-center mb-12">
         <h1 className="text-3xl font-bold mb-8">Contactez-nous</h1>
         <p className="text-gray-600">

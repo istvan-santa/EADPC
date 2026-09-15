@@ -1,5 +1,6 @@
 // src/pages/Login.jsx
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Navigate } from "react-router-dom";
 
@@ -40,6 +41,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <Helmet>
+        <title>Connexion | EADPC</title>
+        <meta name="robots" content="noindex" />
+      </Helmet>
+
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-4">Connexion</h1>
         {error && <p className="text-red-600 mb-3">{error}</p>}

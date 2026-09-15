@@ -1,5 +1,6 @@
 // src/pages/Services.jsx
 import React from "react";
+import { Helmet } from "react-helmet-async";
 
 const services = [
   {
@@ -36,11 +37,20 @@ const services = [
 
 export default function Services() {
   return (
-    <section className="bg-white py-16 px-4 md:px-8">
+    <section className="bg-white pt-36 pb-16 px-4 md:px-8">
+      <Helmet>
+        <title>Nos services de plomberie et chauffage | EADPC</title>
+        <meta
+          name="description"
+          content="Dépannage d'urgence, rénovation de salle de bain, climatisation, chauffage, pompes à chaleur et assainissement par EADPC, artisan à Grasse."
+        />
+        <link rel="canonical" href="https://www.eadpc.fr/services" />
+      </Helmet>
+
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-semibold text-center mb-12">
+        <h1 className="text-3xl font-semibold text-center mb-12">
           Nos Services
-        </h2>
+        </h1>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => (
             <div

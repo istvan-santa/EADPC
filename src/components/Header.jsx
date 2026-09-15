@@ -13,17 +13,24 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="text-xl font-bold">
-          <img src="/assets/images/logo2.0.png" alt="Logo" className="h-20" />
+          <img
+            src="/assets/images/logo2.0.webp"
+            alt="EADPC, plombier chauffagiste à Grasse"
+            width="400"
+            height="269"
+            className="h-20 w-auto"
+          />
         </Link>
 
         {/* Menu desktop */}
         <div className="hidden md:flex items-center space-x-6 font-semibold text-gray-700">
           <Link to="/" className="hover:text-black">Accueil</Link>
+          <Link to="/services" className="hover:text-black">Services</Link>
           <Link to="/realisations" className="hover:text-black">Réalisations</Link>
           <Link to="/contact" className="hover:text-black">Contact</Link>
 
           {/* Icône de connexion */}
-          <Link to="/admin" className="hover:text-black ml-4">
+          <Link to="/login" className="hover:text-black ml-4" aria-label="Espace administration">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -46,7 +53,8 @@ export default function Header() {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="focus:outline-none"
-            aria-label="Toggle menu"
+            aria-label="Ouvrir le menu"
+            aria-expanded={isOpen}
           >
             <svg
               className="w-6 h-6"
@@ -77,15 +85,17 @@ export default function Header() {
 
       {/* Menu mobile déroulant */}
       <div
+        aria-hidden={!isOpen}
         className={`md:hidden bg-white px-4 overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-96 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"
+          isOpen ? "max-h-96 opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2 invisible"
         }`}
       >
         <nav className="flex flex-col space-y-4 font-semibold text-gray-700 py-4">
           <Link to="/" onClick={handleLinkClick}>Accueil</Link>
+          <Link to="/services" onClick={handleLinkClick}>Services</Link>
           <Link to="/realisations" onClick={handleLinkClick}>Réalisations</Link>
           <Link to="/contact" onClick={handleLinkClick}>Contact</Link>
-          <Link to="/admin" onClick={handleLinkClick}>Connexion</Link>
+          <Link to="/login" onClick={handleLinkClick}>Connexion</Link>
         </nav>
       </div>
     </header>

@@ -1,6 +1,7 @@
 // src/pages/Home.jsx
 import React from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import ZoneIntervention from "../components/ZoneIntervention";
 
 const services = [
@@ -38,17 +39,17 @@ const services = [
 
 const previewProjects = [
   {
-    image: "/assets/images/Image-1.jpg",
+    image: "/assets/images/Image-1.webp",
     title: "Installation sanitaire",
     location: "Mougins",
   },
   {
-    image: "/assets/images/Image-2.jpg",
+    image: "/assets/images/Image-2.webp",
     title: "Installation sanitaire",
     location: "Antibes",
   },
   {
-    image: "/assets/images/Image-3.jpg",
+    image: "/assets/images/Image-3.webp",
     title: "Installation sanitaire",
     location: "Cannes",
   },
@@ -59,17 +60,25 @@ const previewProjects = [
 export default function Home() {
   return (
     <>
+      <Helmet>
+        <title>EADPC | Plombier chauffagiste à Grasse et sur la Côte d'Azur</title>
+        <meta
+          name="description"
+          content="EADPC, artisan plombier à Grasse : rénovation de salle de bain haut de gamme, dépannage d'urgence 24h/7j, climatisation et chauffage sur toute la Côte d'Azur."
+        />
+        <link rel="canonical" href="https://www.eadpc.fr/" />
+      </Helmet>
+
       {/* Hero */}
       <section
         className="min-h-screen bg-cover bg-center flex items-center justify-center"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c')",
+          backgroundImage: "url('/assets/images/IMG-20250612-WA0011.webp')",
         }}
       >
         <div className="bg-black bg-opacity-50 p-10 rounded text-center max-w-2xl">
           <h1 className="text-white text-4xl md:text-6xl font-bold mb-4">
-            EADPC Expert en installations 
+            EADPC, expert en installations
           </h1>
           <p className="text-white text-lg mb-6">
             Design. Confort. Excellence artisanale.
@@ -119,7 +128,10 @@ export default function Home() {
               >
                 <img
                   src={project.image}
-                  alt={project.title}
+                  alt={`${project.title} à ${project.location}`}
+                  width="1000"
+                  height="1333"
+                  loading="lazy"
                   className="w-full h-64 object-cover"
                 />
                 <div className="p-4 bg-gray-100">
@@ -142,8 +154,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ZoneIntervention />
     </>
   );
 }
-
-<ZoneIntervention />

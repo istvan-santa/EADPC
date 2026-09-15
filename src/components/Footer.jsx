@@ -1,21 +1,10 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { VILLES, slugVille } from "../data/villes";
 
 const Footer = () => {
   const [open, setOpen] = useState(false);
-
-  const villes = [
-    "Grasse",
-    "Cannes",
-    "Antibes",
-    "Nice",
-    "Cagnes-sur-Mer",
-    "Mougins",
-    "Mouans-Sartoux",
-    "Valbonne",
-    "Opio",
-    "Le Rouret",
-  ];
 
   return (
     <footer className="bg-black text-white py-10 px-4 mt-20">
@@ -76,8 +65,15 @@ const Footer = () => {
 
         {open && (
           <ul className="mt-4 space-y-1 text-sm text-gray-300">
-            {villes.map((ville, index) => (
-              <li key={index}>• {ville}</li>
+            {VILLES.map((ville) => (
+              <li key={ville}>
+                <Link
+                  to={`/plombier-${slugVille(ville)}`}
+                  className="hover:text-white hover:underline"
+                >
+                  {ville}
+                </Link>
+              </li>
             ))}
           </ul>
         )}

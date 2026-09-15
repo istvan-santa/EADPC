@@ -37,11 +37,13 @@ Côté Firebase, deux étapes supplémentaires :
 
 ```
 src/
-  pages/        Home, Services, Realisations, Contact, Login, Admin
+  pages/        Home, Services, Realisations, Contact, PlombierVille,
+                NotFound, Login, Admin
   components/   Header, Footer, ZoneIntervention, ScrollToTop
   context/      AuthContext (Firebase Auth)
   routes/       PrivateRoute (protection de /admin)
   firebase/     initialisation Firebase (db + auth)
+  data/         villes.js, source unique de la zone d'intervention
   utils/        upload Cloudinary
 ```
 
@@ -52,17 +54,34 @@ passe par `/login` avec le compte Firebase. Les images sont envoyées à
 Cloudinary (preset `realisation_upload`), et leur URL est stockée dans la
 collection Firestore `realisations`.
 
+## Pages locales
+
+Chaque commune de la zone d'intervention a sa propre page, du type
+`/plombier-cannes`. Elles sont générées à partir de la liste unique
+`src/data/villes.js`, qui alimente aussi le footer et la section « Zone
+d'intervention » de l'accueil. Ajouter une commune à cette liste crée la page,
+la route et les liens correspondants. Il reste à l'ajouter manuellement à
+`public/sitemap.xml`.
+
+## Déploiement
+
+Le site est une application monopage : le serveur doit renvoyer `index.html`
+pour toutes les URL, sinon un rafraîchissement sur `/realisations` provoque une
+erreur 404. La configuration est déjà fournie pour les deux hébergeurs les plus
+courants, `vercel.json` pour Vercel et `public/_redirects` pour Netlify. Sur un
+serveur Apache, l'équivalent est une règle `mod_rewrite` vers `index.html`.
+
+Après mise en ligne, penser à déclarer `https://www.eadpc.fr/sitemap.xml` dans
+la Google Search Console.
+
 ## Points restants
 
-- La route `/services` existe et la page est rédigée, mais aucun lien du menu
-  n'y mène.
-- `public/sitemap.xml` et `public/robots.txt` contiennent encore des domaines
-  d'exemple (`monsite.com`, `tonsite.com`) à remplacer par le domaine réel.
-  Idem pour le champ `image` du JSON-LD dans `index.html`.
-- `react-helmet-async` est installé mais inutilisé : toutes les pages partagent
-  le même titre et la même meta description.
-- Pas de route 404. En hébergement statique, penser à rediriger toutes les URL
-  vers `index.html`, sinon un rafraîchissement sur `/realisations` renvoie une
-  erreur serveur.
-- Les images de `public/assets/images` (1,9 Mo de JPG) sont servies en pleine
-  résolution dans des vignettes. À convertir en WebP ou à passer par Cloudinary.
+- Deux vulnérabilités npm subsistent, sur `esbuild` (serveur de développement
+  uniquement, sans effet sur le site en ligne) et `react-router`. Les corriger
+  suppose de passer à Vite 6 et React Router 7, deux montées de version
+  majeures qui demandent des tests.
+- Les photos de `public/assets/images` ont été converties en WebP, mais sept
+  d'entre elles ne sont utilisées nulle part dans le code. Elles sont
+  conservées comme réserve visuelle et peuvent être supprimées.
+- Le formulaire de contact n'enregistre rien côté site : les demandes partent
+  uniquement par e-mail via Web3Forms.

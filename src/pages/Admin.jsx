@@ -12,6 +12,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "../context/AuthContext";
 
 export default function Admin() {
@@ -66,6 +67,11 @@ export default function Admin() {
 
   return (
     <section className="pt-36 pb-12 px-4 md:px-8 bg-gray-50 min-h-screen">
+      <Helmet>
+        <title>Espace administration | EADPC</title>
+        <meta name="robots" content="noindex" />
+      </Helmet>
+
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Espace Administration</h1>
